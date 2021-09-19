@@ -1,0 +1,9 @@
+# zsh
+alias d='dirs -v'
+for index ({1..9}) alias "$index"="cd +${index}"; unset index
+
+# ls
+alias ls='ls -a --color=auto -l'
+
+# grep
+alias grep='grep --color=auto'

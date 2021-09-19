@@ -1,0 +1,59 @@
+general {
+        colors = true
+        interval = 5
+}
+
+order += "wireless wlp1s0"
+order += "disk /"
+order += "cpu_usage"
+order += "memory"
+order += "battery 1"
+order += "read_file brightness"
+order += "volume master"
+order += "tztime local"
+
+cpu_usage {
+	format = " %usage"
+	max_threshold = 75
+}
+
+volume master {
+	format = " %volume"
+	format_muted = " %volume"
+}
+
+wireless wlp1s0 {
+        format_up = " %essid"
+        format_down = " down"
+}
+
+disk "/" {
+        format = " %percentage_used"
+	low_threshold = 5
+	format_below_threshold = " %percentage_used (%free)"
+}
+
+memory {
+        format = " %used"
+        threshold_degraded = "1G"
+        format_degraded = "! %available"
+}
+
+tztime local {
+        format = "%d/%m/%Y %H:%M:%S"
+}
+
+battery 1 {
+	format = "%status %percentage %remaining"
+	status_chr = ""
+	status_bat = ""
+	status_unk = "?"
+	status_full = ""
+}
+
+read_file brightness {
+	format = " %content%"
+	path = "/home/yafou/.config/i3status/brightness"
+	max_characters=5
+	color_good = "#FFFFFF"
+}

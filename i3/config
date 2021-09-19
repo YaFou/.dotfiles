@@ -1,0 +1,196 @@
+set $refresh_i3status killall -SIGUSR1 i3status
+
+# Leader
+set $mod Mod4
+
+# Font
+font pango:Fira Code Regular 8
+
+# Autolock
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+# Network
+exec --no-startup-id nm-applet
+
+# Audio keybindings
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# Drag windows
+floating_modifier $mod
+
+# Terminal
+bindsym $mod+Return exec i3-sensible-terminal
+
+# Kill window
+bindsym $mod+Shift+q kill
+
+# Start application launcher
+bindsym $mod+d exec --no-startup-id rofi -show drun -config ~/.config/rofi/config.rasi
+
+# Change focus
+#bindsym $mod+h focus left
+#bindsym $mod+j focus down
+#bindsym $mod+k focus up
+#bindsym $mod+l focus right
+
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+#bindsym $mod+Shift+j move left
+#bindsym $mod+Shift+k move down
+#bindsym $mod+Shift+l move up
+#bindsym $mod+Shift+semicolon move right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Split in horizontal orientation
+bindsym $mod+h split h
+
+# Split in vertical orientation
+bindsym $mod+v split v
+
+# Enter in full screen
+bindsym $mod+f fullscreen toggle
+
+# Change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# Change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# Focus the parent container
+bindsym $mod+a focus parent
+
+# Focus the child container
+#bindsym $mod+d focus child
+
+# Workspaces
+set $ws1 ""
+set $ws2 ""
+set $ws3 "3"
+
+# Switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+
+# Reload the configuration file
+bindsym $mod+Shift+c reload
+
+# Restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+
+# Exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+# Resize window
+mode "resize" {
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# Keyboard layout
+exec_always setxkbmap fr
+
+# Background
+exec_always feh --bg-scale /home/yafou/.config/i3/background.jpg
+
+# Assign window to workspaces
+for_window [class="firefox"] move to workspace $ws2
+for_window [class="URxvt"] move to workspace $ws1
+
+hide_edge_borders both
+
+# Brightness keybindings
+bindsym XF86MonBrightnessUp exec --no-startup-id sh ~/.config/i3/brightness.sh inc && $refresh_i3status
+bindsym XF86MonBrightnessDown exec --no-startup-id sh ~/.config/i3/brightness.sh dec && $refresh_i3status
+
+# Monitors
+set $monitor1 HDMI-A-0
+set $monitor2 eDP
+
+workspace $ws1 output HDMI-A-0
+workspace $ws2 output $monitor2
+workspace $ws3 output $monitor2
+
+# Window opacity
+exec_always --no-startup-id picom
+
+for_window[class=".*"] border pixel 1
+
+# Mouse speed
+exec_always --no-startup-id sh ~/.config/i3/mousespeed.sh
+
+# System mode
+bindsym $mod+BackSpace mode system
+
+mode system {
+	bindsym x exec --no-startup-id sh ~/.config/i3/lock.sh, mode default
+	bindsym r exec --no-startup-id reboot
+	bindsym s exec --no-startup-id shutdown now
+	bindsym Return mode default
+	bindsym Escape mode default
+}
+
+# Colors
+set_from_resource       $active       active
+set_from_resource       $inactive     secondary
+set_from_resource       $background   background
+set_from_resource       $foreground   foreground
+
+client.focused          $background $background $active        #F8CD7A   $active
+client.focused_inactive $background $background inactive       #5A638C   $inactive
+client.unfocused        $background #16161E     $inactive      #34384D   $inactive
+client.urgent           $active     $active    	$background    #DB4B4B   $active
+client.placeholder      $background $background $foreground    #000000   $inactive
+client.background       $background
+
+# Status bar
+bar {
+	status_command i3status
+	position top
+	tray_output none
+	font pango:Fira Code Regular 9
+
+	colors {
+		background 	   $background
+		statusline         $foreground
+		separator 	   $foreground
+		focused_workspace  $background $background $active
+		inactive_workspace $background $background $inactive
+		urgent_workspace   $active $active $background
+		binding_mode       $background $active $foreground
+	}
+}
