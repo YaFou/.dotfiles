@@ -53,3 +53,6 @@ cursor_mode
 
 # Syntax highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Move to home directory
+cd $HOME
